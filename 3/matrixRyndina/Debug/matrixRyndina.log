@@ -1,0 +1,3 @@
+﻿  matrixRyndina.cpp
+c:\users\val\source\repos\matrixryndina\matrixryndina.cpp(147): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  matrixRyndina.vcxproj -> C:\Users\Val\source\repos\matrixRyndina\Debug\matrixRyndina.exe

@@ -1,0 +1,44 @@
+package lesson5;
+
+import java.util.concurrent.Semaphore;
+
+public class philosophers {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Boolean[] cups = new Boolean[5];
+		for (int i = 0; i < 5; i++) {
+			cups[i] = true;
+		}
+		
+		for (int i = 0; i < 5; i++) {
+			final Thread t = new Thread(()->{
+				for (int j = 0; j < 5; j++) {
+					int s = Thread.currentThread().getName().length();
+					s =  (int)Thread.currentThread().getName().charAt(s - 1) - 48;
+					if ( ((int)(Math.random() * 10) % 2 == 0 ) && (cups[s] == true && cups[(s < 4 ? s + 1 : 0)] == true) ) {
+							cups[s] = false;
+							cups[(s == 4 ? 0 : s + 1)] = false;
+							System.err.println(Thread.currentThread().getName() + " eating");
+							try{Thread.sleep((long)(1000));
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							cups[s] = true;
+							cups[(s == 4 ? 0 : s + 1)] = true;
+					} else {	
+						try{Thread.sleep((long)(5000));
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						System.err.println(Thread.currentThread().getName() + " thinking");
+					}
+				}
+				System.err.println(Thread.currentThread().getName() + " END");
+			});
+			t.start();
+		}	
+		
+	}
+
+}

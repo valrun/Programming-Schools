@@ -1,0 +1,86 @@
+public class Lesson6ExprTest {
+
+	static char[]	data;
+	static int		pos;
+	
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String	s = "3-(5%17)+(-13)*2-7";
+		
+		data = (s+"@").toCharArray();
+		pos = 0;
+		System.err.println("Result = "+add());
+	}
+
+	static int add() {
+		int	value = mul();
+		
+		for (;;) {
+			switch (data[pos]) {
+				case '+' :
+					pos++;
+					value += mul();
+					break;
+				case '-' :
+					pos++;
+					value -= mul();
+					break;
+				default : 
+					return value;
+			}
+		}
+	}
+	
+	static int mul() {
+		int	value = term();
+		
+		for (;;) {
+			switch (data[pos]) {
+				case '*' :
+					pos++;
+					value *= term();
+					break;
+				case '/' :
+					pos++;
+					value /= term();
+					break;
+				case '%' :
+					pos++;
+					value %= term();
+					break;
+				case '-' :
+					if (pos == 0 || data[pos - 1] == '(') {
+						pos++;
+						value -= term();
+						break;
+					}
+				case '+' :
+					if (pos == 0 || data[pos - 1] == '(') {
+						pos++;
+						value = term();
+						break;
+					}
+				default : 
+					return value;
+			}
+		}
+	}
+	
+	static int term() {
+		int	value = 0;
+		
+		if (data[pos] == '(') {
+			pos++;
+			value = add();
+			pos++;
+		}
+		else {
+			while (data[pos] >= '0' && data[pos] <= '9') {
+				value = value * 10 + data[pos] - '0';
+				pos++;
+			}
+			
+		}
+		return value;
+	}

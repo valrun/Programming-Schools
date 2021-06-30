@@ -1,0 +1,210 @@
+//9. RVLibCalculation.h
+#include <stdlib.h>
+#include <ctime>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include "9. StackStr.h"
+#include "9. RVLibVisualCalculation.h"
+
+
+
+char inversionBrackts(char brackts)
+{
+    switch (brackts)
+    {
+    case '(':
+        brackts = ')';
+        break;
+    case '[':
+        brackts = ']';
+        break;
+    case '{':
+        brackts = '}';
+        break;
+    case ')':
+        brackts = '(';
+        break;
+    case ']':
+        brackts = '[';
+        break;
+    case '}':
+        brackts = '{';
+        break;
+    }
+    return brackts;
+}
+
+bool isBracketsCorrect(char* str)
+{
+    StackStr brackets;
+    brackets.create();
+
+    for (int i = 0; i < strlen(str); i++)
+    {
+        if (str[i] == '(' || str[i] == '[' || str[i] == '{')
+        {
+            brackets.push(str[i]);
+        }
+        else if (str[i] == ')' || str[i] == ']' || str[i] == '}')
+        {
+            char out;
+            brackets.getTop(& out);
+            if (str[i] != inversionBrackts(out) || !brackets.isEmpty())
+            {
+                brackets.destruct();
+                return false;
+            }
+            else
+            {
+                brackets.pop(& out);
+            }
+        }
+    }
+    bool a = brackets.isEmpty();
+    brackets.destruct();
+    return !a;
+}
+
+struct Token
+{
+    enum TokenType
+    {
+        Operand, Operation, Bracket, Space
+    };
+
+    enum SignType
+    {
+        Plus, Minus, Multiply, Divise, Degree
+    };
+
+    TokenType type;
+    int val;
+    int priority;
+    SignType sign;
+    bool isOpen;
+
+    bool strToToken(char* str, int* pos);
+
+    bool isBrackets(char* str, int* pos);
+    bool isNumber(char* str, int* pos);
+    bool isOperation(char* str, int* pos);
+
+};
+
+bool Token::strToToken(char* str, int* pos)   //!!!!
+{
+    if (str[*pos] == ' ')
+    {
+          //!!!!!!!!!!!!
+        (*pos)++;
+    }
+    else if (isBrackets(str, pos))
+    {
+        return true;
+    }
+    else if (isNumber(str, pos))
+    {
+        return true;
+    }
+    else if (isOperation(str, pos))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Token::isBrackets(char* str, int* pos)
+{
+    if (inversionBrackts(str[*pos]) != str[*pos])
+    {
+        type = Bracket;
+        priority = 0;
+        if (str[*pos] == '(' || str[*pos] == '{' || str[*pos] == '[')
+        {
+            isOpen = true;
+        }
+        else
+        {
+            isOpen = false;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool Token::isNumber(char* str, int* pos)
+{
+    char arr[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    bool number = false;
+    bool number2 = false;
+    for (int i = 0; i < 10; i++)
+    {
+        if (str[*pos] == arr[i])
+        {
+            number = true;
+            number2 = true;
+            break;
+        }
+    }
+
+    while (number)
+    {
+        (*pos)++;
+        number = false;
+
+        for (int i = 0; i < 10; i++)
+        {
+            if (str[*pos] == arr[i])
+            {
+                val *= 10;
+                val += i;
+                number = true;
+                break;
+            }
+        }
+    }
+    return number2;
+
+}
+
+bool Token::isOperation(char* str, int* pos)
+{
+    if ('+' == str[*pos])
+    {
+        type = Operation;
+        priority = 2;
+        sign = Plus;
+        return true;
+    }
+    else if ('-' == str[*pos])
+    {
+        type = Operation;
+        priority = 2;
+        sign = Minus;
+        return true;
+    }
+    else if ('*' == str[*pos])
+    {
+        type = Operation;
+        priority = 3;
+        sign = Multiply;
+        return true;
+    }
+    else if (':' == str[*pos] || '/' == str[*pos])
+    {
+        type = Operation;
+        priority = 3;
+        sign = Divise;
+        return true;
+    }
+    else if ('^' == str[*pos])
+    {
+        type = Operation;
+        priority = 4;
+        sign = Degree;
+        return true;
+    }
+    return false;
+}

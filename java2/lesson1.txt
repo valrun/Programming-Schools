@@ -1,0 +1,31 @@
+package lesson1;
+
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+
+
+public class CollectionUsage {
+
+	
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+		// TODO Auto-generated method stub
+		try(final FileInputStream is = new FileInputStream("t:/java/asdf.txt");
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is))){
+			String strLine;
+			Set<String> s = new HashSet<>();
+			 
+			while((strLine = br.readLine()) != null){
+				if (s.remove(strLine)) {
+					System.err.println(strLine);
+				}
+				s.add(strLine);
+			}	
+		}
+	}
+}
